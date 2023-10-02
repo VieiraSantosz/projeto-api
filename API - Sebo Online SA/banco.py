@@ -26,8 +26,8 @@
     area VARCHAR(20) NOT NULL
 );
 
-4° Código
 
+4° Código para testar a conexão com o banco de dados
 import mysql.connector
 
 conexao = mysql.connector.connect(
