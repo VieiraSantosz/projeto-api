@@ -1,3 +1,33 @@
+1° Criar banco de dados no MySql
+- CREATE DATABASE SeboOnline;
+- USE SeboOnline;
+
+
+2° Criar a tabela user
+- CREATE TABLE user (
+    iduser INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(10) NOT NULL,
+    email VARCHAR(30) NOT NULL,
+    password VARCHAR(30) NOT NULL,
+    status VARCHAR(10) NOT NULL,
+    type VARCHAR(20) NOT NULL
+);
+
+
+3° Criar a tabela admin
+- CREATE TABLE admin (
+    idadmin INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(10) NOT NULL,
+    email VARCHAR(30) NOT NULL,
+    password VARCHAR(30) NOT NULL,
+    status VARCHAR(10) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    date DATE NOT NULL,
+    area VARCHAR(20) NOT NULL
+);
+
+4° Código
+
 import mysql.connector
 
 conexao = mysql.connector.connect(
@@ -13,7 +43,6 @@ if conexao.is_connected():
 else:
     print("Não foi possível conectar com o MySql!!")
     
-
 
 ### ADICIONA AS INFO NO BANCO DE DADOS ###
 cursor = conexao.cursor()
