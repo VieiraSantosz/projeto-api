@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
 import mysql.connector
+import bcrypt
 
 
 app = Flask(__name__)
@@ -83,9 +84,10 @@ if conexao.is_connected():
             return jsonify(response)
         
         cursor = conexao.cursor()
-
+        
         recuperar_usuarios_sql = "SELECT * FROM user"       
         cursor.execute(recuperar_usuarios_sql)
+        
         
         usuarios = cursor.fetchall()
         cursor.close()

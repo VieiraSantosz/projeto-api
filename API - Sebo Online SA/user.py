@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
 import mysql.connector
+import bcrypt
 
 
 app = Flask(__name__)
@@ -23,12 +24,15 @@ if conexao.is_connected():
         if 'name' in novo_user and 'email' in novo_user and 'password' in novo_user and 'status' in novo_user and 'type' in novo_user:
             cursor = conexao.cursor()
 
+            # Gere um hash da senha usando bcrypt
+            senha_criptografa = bcrypt.hashpw(novo_user['password'].encode('utf-8'), bcrypt.gensalt())
+
             criar_usuario_sql = "INSERT INTO user (name, email, password, status, type) VALUES (%s, %s, %s, %s, %s)"
-            
+
             cursor.execute(criar_usuario_sql, (
                 novo_user['name'],
                 novo_user['email'],
-                novo_user['password'],
+                senha_criptografa,  # Armazenar o hash da senha no banco de dados
                 novo_user['status'],
                 novo_user['type']
             ))
@@ -59,33 +63,35 @@ if conexao.is_connected():
         login = request.get_json()
         
         usuario = login.get('name')
-        senha   = login.get('password')
+        senha = login.get('password')
         
         cursor = conexao.cursor()
 
-        verificar_credenciais_sql = "SELECT iduser, name FROM user WHERE name = %s AND password = %s"
+        verificar_credenciais_sql = "SELECT iduser, name, password FROM user WHERE name = %s"
         
-        cursor.execute(verificar_credenciais_sql, (usuario, senha))
+        cursor.execute(verificar_credenciais_sql, (usuario,))
         
         resultado = cursor.fetchone()
         cursor.close()
 
         if resultado:
+            # Verifique a senha criptografada usando bcrypt
+            stored_password = resultado[2].encode('utf-8')
             
-            session['name'] = usuario
+            if bcrypt.checkpw(senha.encode('utf-8'), stored_password):
+                session['name'] = usuario
 
-            response = {
-                'id': resultado[0],
-                'name': resultado[1],
-                'message': 'Login Feito com Sucesso!'
-            }
-            return jsonify(response)
+                response = {
+                    'id': resultado[0],
+                    'name': resultado[1],
+                    'message': 'Login Feito com Sucesso!'
+                }
+                return jsonify(response)
         
-        else:
-            response = {
-                'message': 'Dados Inválidos!'
-            }
-            return jsonify(response)
+        response = {
+            'message': 'Dados Inválidos!'
+        }
+        return jsonify(response)
 ########################################  
 
 
@@ -125,10 +131,13 @@ if conexao.is_connected():
 
         editar_usuario_sql = "UPDATE user SET name = %s, email = %s, password = %s, status = %s, type = %s WHERE iduser = %s"
         
+        # Hash da senha com bcrypt
+        senha_criptografa = bcrypt.hashpw(editar_user['password'].encode('utf-8'), bcrypt.gensalt())
+        
         cursor.execute(editar_usuario_sql, (
             editar_user['name'], 
             editar_user['email'], 
-            editar_user['password'], 
+            senha_criptografa,  # Armazene a senha criptografada no banco de dados
             editar_user['status'], 
             editar_user['type'], 
             id
