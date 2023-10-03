@@ -8,7 +8,7 @@
     iduser INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(10) NOT NULL,
     email VARCHAR(30) NOT NULL,
-    password VARCHAR(30) NOT NULL,
+    password VARCHAR(100) NOT NULL,
     status VARCHAR(10) NOT NULL,
     type VARCHAR(20) NOT NULL
 );
@@ -19,7 +19,7 @@
     idadmin INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(10) NOT NULL,
     email VARCHAR(30) NOT NULL,
-    password VARCHAR(30) NOT NULL,
+    password VARCHAR(100) NOT NULL,
     status VARCHAR(10) NOT NULL,
     type VARCHAR(20) NOT NULL,
     date DATE NOT NULL,
