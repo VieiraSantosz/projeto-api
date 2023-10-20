@@ -35,7 +35,21 @@
 );
 
 
-5° Código para testar a conexão com o banco de dados
+5° Criar a tabela item
+- CREATE TABLE item (
+    iditem INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(20) NOT NULL,
+    author VARCHAR(20) NOT NULL,
+    FOREIGN KEY (category_id) references PRIMARY KEY category (idcategory),
+    price MONEY NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    status VARCHAR(10) NOT NULL,
+    date DATE NOT NULL,
+    FOREIGN KEY (saller_id) references PRIMARY KEY user (iduser)
+);
+
+
+6° Código para testar a conexão com o banco de dados
 import mysql.connector
 
 conexao = mysql.connector.connect(
