@@ -27,7 +27,15 @@
 );
 
 
-4° Código para testar a conexão com o banco de dados
+4° Criar a tabela category
+- CREATE TABLE category (
+    idcategory INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
+    description VARCHAR(100) NOT NULL
+);
+
+
+5° Código para testar a conexão com o banco de dados
 import mysql.connector
 
 conexao = mysql.connector.connect(
