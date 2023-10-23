@@ -37,7 +37,7 @@ def criar_categoria():
 
                response = {
                 'message': 'Categoria criado com sucesso!',
-                'dados_user': categoria
+                'dados_user': criar_categoria
             }
 
             return jsonify(response)
@@ -64,7 +64,7 @@ def editar_categoria(id):
         
         cursor = conexao.cursor()
 
-        editar_categoria = f'UPDATE category SET name = "{nome}, description = "{descricao}"' 
+        editar_categoria = f'UPDATE category SET name = "{nome}", description = "{descricao}" WHERE idcategory = "{id}"' 
         cursor.execute(editar_categoria)
 
         conexao.commit()
@@ -72,7 +72,7 @@ def editar_categoria(id):
 
             response = {
             'message': 'Categoria editada com sucesso!',
-            'dados_user': categoria
+            'dados_user': editar_categoria
         }
         
         else:
@@ -90,7 +90,7 @@ def mostrar_categoria():
     
         cursor = conexao.cursor()
         
-        listar_categoria = "SELECT * FROM user"       
+        listar_categoria = "SELECT * FROM category"       
         cursor.execute(listar_categoria)
         
         categorias = cursor.fetchall()
@@ -98,12 +98,9 @@ def mostrar_categoria():
 
         categorias_json = [
             {
-                'id'        : u[0], 
-                'name'      : u[1], 
-                'email'     : u[2], 
-                'password'  : u[3], 
-                'status'    : u[4], 
-                'type'      : u[5]
+                'id'            : u[0], 
+                'name'          : u[1], 
+                'description'   : u[2]
             } 
             
             for u in categorias
@@ -119,9 +116,9 @@ def mostrar_categoria():
     
         cursor = conexao.cursor()
 
-        excluir_usuario_sql = "DELETE FROM category WHERE idcategory = %s"  
+        excluir_categoria_sql = f'DELETE FROM category WHERE idcategory = "{id}"'  
         
-        cursor.execute(excluir_usuario_sql, (id,))  
+        cursor.execute(excluir_categoria_sql)  
 
         conexao.commit()
         cursor.close()
