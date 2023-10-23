@@ -49,7 +49,18 @@
 );
 
 
-6° Código para testar a conexão com o banco de dados
+6° Criar a tabela transações
+- CREATE TABLE transaction (
+    idtransaction INT PRIMARY KEY AUTO_INCREMENT,
+    FOREIGN KEY (buyer_id) references PRIMARY KEY user (iduser),
+    FOREIGN KEY (saller_id) references PRIMARY KEY user (iduser),
+    FOREIGN KEY (item_id) references PRIMARY KEY item (iditem),
+    date DATE NOT NULL,
+    price MONEY NOT NULL
+);
+
+
+7° Código para testar a conexão com o banco de dados
 import mysql.connector
 
 conexao = mysql.connector.connect(
