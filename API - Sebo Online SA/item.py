@@ -97,8 +97,8 @@ def criar_itens():
             
             cursor = conexao.cursor()
 
-            criar_item = f'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id) 
-                           VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
+            criar_item = 'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id)'
+                        f'VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
             cursor.execute(criar_item)
 
             conexao.commit()
