@@ -169,7 +169,7 @@ def criar_itens():
         
         cursor = conexao.cursor()
         
-        recuperar_usuarios_sql = f'SELECT * FROM item WHERE iditem = "{id}"'       
+        recuperar_item_sql = f'SELECT * FROM item WHERE iditem = "{id}"'       
         cursor.execute(recuperar_item_sql)
         
         items = cursor.fetchall()
@@ -248,7 +248,7 @@ def criar_itens():
 
         excluir_item_sql = "DELETE FROM item WHERE iditem = %s"  
         
-        cursor.execute(excluir_usuario_sql, (id,))  
+        cursor.execute(excluir_item_sql, (id,))  
 
         conexao.commit()
         cursor.close()
