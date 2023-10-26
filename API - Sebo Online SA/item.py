@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
-from bcrypt import gensalt, hashpw
+import mysql.connector
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'chave_secreta'
@@ -27,7 +28,7 @@ if conexao.is_connected():
         
         cursor = conexao.cursor()
 
-        verificar_credenciais_sql = "SELECT iduser, name, password FROM user WHERE name = %s and type = vendedor"
+        verificar_credenciais_sql = 'SELECT iduser, name, password FROM user WHERE name = %s and type = "vendedor"'
         
         cursor.execute(verificar_credenciais_sql, (usuario,))
         
@@ -44,7 +45,7 @@ if conexao.is_connected():
                 response = {
                     'id': resultado[0],
                     'name': resultado[1],
-                    'type': resultado[2]
+                    'type': resultado[2],
                     'message': 'Login Feito com Sucesso!'
                 }
                 return jsonify(response)
@@ -77,47 +78,51 @@ if conexao.is_connected():
 
 
 ### METÓDO POST PARA CRIAR ITENS ###
-@app.route('/items', methods=['POST'])
-def criar_itens():
-    
-        item = request.get_json()
+    @app.route('/items', methods=['POST'])
+    def criar_itens():
         
-        if 'title' in item and 'author' in item and 'category_id' in item
-           'price' in item and 'description' in item and 'status' in item
-           'date' in item and 'saller_id' in item:
-        
-            titulo          = item.get('title')
-            autor           = item.get('author')
-            categoria_id    = item.get('category_id')
-            preco           = item.get('price')
-            descricao       = item.get('description')
-            status          = item.get('status')
-            data            = item.get('date')
-            vendedor_id     = item.get('saller_id')
+            item = request.get_json()
             
-            cursor = conexao.cursor()
+            if 'title' in item and 'author' in item and 'category_id' in item and 'price' in item and 'description' in item and 'status' in item and 'date' in item and 'saller_id' in item:
+            
+                titulo          = item.get('title')
+                autor           = item.get('author')
+                categoria_id    = item.get('category_id')
+                preco           = item.get('price')
+                descricao       = item.get('description')
+                status          = item.get('status')
+                data            = item.get('date')
+                vendedor_id     = item.get('saller_id')
+                
+                cursor = conexao.cursor()
 
-            criar_item = 'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id)'
-                        f'VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
-            cursor.execute(criar_item)
+                criar_item = f'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id) VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
+                cursor.execute(criar_item)
 
-            conexao.commit()
-            cursor.close()
+                conexao.commit()
+                cursor.close()
 
-               response = {
-                'message': 'Categoria criado com sucesso!',
-                'dados_user': criar_item
-            }
+                response = {
+                    'title': titulo,
+                    'author': autor,
+                    'category_id': categoria_id,
+                    'price': preco,
+                    'description': descricao,
+                    'status': status,
+                    'date': data,
+                    'saller_id': vendedor_id,
+                    'message': 'Item criado com sucesso!'
+                }
 
-            return jsonify(response)
-        
-        else:
-            response = {
-                'error': 'Verifique se os campos estão sendo inseridos corretamente!'
-            }
+                return jsonify(response)
+            
+            else:
+                response = {
+                    'error': 'Verifique se os campos estão sendo inseridos corretamente!'
+                }
 
-            return jsonify(response)
-########################################  
+                return jsonify(response)
+########################################
 
 
 ### METÓDO GET PARA LISTAR ITENS ###
@@ -208,8 +213,7 @@ def criar_itens():
         
         cursor = conexao.cursor()
 
-        editar_item_sql = 'UPDATE item SET title = %s, author = %s, category_id = %s, price = %s, description = %s, status = %s,' 
-                          'date = %s, saller_id = %s WHERE iditem = %s'
+        editar_item_sql = 'UPDATE item SET title = %s, author = %s, category_id = %s, price = %s, description = %s, status = %s, date = %s, saller_id = %s WHERE iditem = %s'
         
         cursor.execute(editar_item_sql, (
             editar_item['title'], 
@@ -257,8 +261,9 @@ def criar_itens():
             'message': 'Item excluído com sucesso!'
         }
         return jsonify(response)
-########################################     
-        
+########################################    
+
+
 else:
     print("Não foi possível conectar com o MySql!!")
 

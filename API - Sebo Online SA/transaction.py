@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
-from bcrypt import gensalt, hashpw
+import mysql.connector
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'chave_secreta'
