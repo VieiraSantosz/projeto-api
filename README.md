@@ -13,3 +13,14 @@ Projeto de Programação Dinâmica para Web cujo o objetivo é desenvolver uma A
 **Transações:** vendas realizadas entre vendedores e compradores.
 <br/>
 
+# Regras de Negócios
+
+1) Permitir o cadastro, edição e remoção de usuários.
+2) Permitir o cadastro, edição e remoção de livros.
+3) Registrar transações entre vendedores e compradores.
+4) Cada livro deve ter (no mínimo) informações como título, autor, categoria, preço e uma breve descrição ou história contada pelo vendedor.
+5) Os usuários devem poder buscar livros por diferentes critérios, ISBN, como título, autor ou categoria.
+6) A plataforma deve ter um sistema de autenticação e autorização para garantir a segurança dos dados dos usuários.
+7) Realizar as remoções de objetos/atores já envolvidos em transações, apenas por soft delete.
+
+
