@@ -40,13 +40,16 @@
     iditem INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(40) NOT NULL,
     author VARCHAR(20) NOT NULL,
-    FOREIGN KEY (category_id) references PRIMARY KEY category (idcategory),
-    price MONEY NOT NULL,
+    category_id INT NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES category (idcategory),
+    price DECIMAL(10, 2) NOT NULL,
     description TEXT NOT NULL,
     status VARCHAR(10) NOT NULL,
     date DATE NOT NULL,
-    FOREIGN KEY (saller_id) references PRIMARY KEY user (iduser)
+    saller_id INT NOT NULL,
+    FOREIGN KEY (saller_id) REFERENCES user (iduser)
 );
+
 
 
 6° Criar a tabela transações
