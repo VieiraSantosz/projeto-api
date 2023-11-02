@@ -31,7 +31,7 @@
 - CREATE TABLE category (
     idcategory INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL,
-    description VARCHAR(100) NOT NULL
+    description TEXT NOT NULL
 );
 
 
@@ -42,7 +42,7 @@
     author VARCHAR(20) NOT NULL,
     FOREIGN KEY (category_id) references PRIMARY KEY category (idcategory),
     price MONEY NOT NULL,
-    description VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
     status VARCHAR(10) NOT NULL,
     date DATE NOT NULL,
     FOREIGN KEY (saller_id) references PRIMARY KEY user (iduser)
