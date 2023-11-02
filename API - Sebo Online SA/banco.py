@@ -38,7 +38,7 @@
 5° Criar a tabela item
 - CREATE TABLE item (
     iditem INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(20) NOT NULL,
+    title VARCHAR(40) NOT NULL,
     author VARCHAR(20) NOT NULL,
     FOREIGN KEY (category_id) references PRIMARY KEY category (idcategory),
     price MONEY NOT NULL,
