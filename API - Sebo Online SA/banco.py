@@ -54,12 +54,15 @@
 
 6° Criar a tabela transações
 - CREATE TABLE transaction (
-    idtransaction INT PRIMARY KEY AUTO_INCREMENT,
-    FOREIGN KEY (buyer_id) references PRIMARY KEY user (iduser),
-    FOREIGN KEY (saller_id) references PRIMARY KEY user (iduser),
-    FOREIGN KEY (item_id) references PRIMARY KEY item (iditem),
+    idtransaction INT AUTO_INCREMENT PRIMARY KEY,
+    buyer_id INT NOT NULL,
+    saller_id INT NOT NULL,
+    item_id INT NOT NULL,
     date DATE NOT NULL,
-    price MONEY NOT NULL
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (buyer_id) REFERENCES `user` (iduser),
+    FOREIGN KEY (saller_id) REFERENCES `user` (iduser),
+    FOREIGN KEY (item_id) REFERENCES `item` (iditem)
 );
 
 
