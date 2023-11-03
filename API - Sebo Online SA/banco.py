@@ -39,7 +39,7 @@
 - CREATE TABLE item (
     iditem INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(40) NOT NULL,
-    author VARCHAR(20) NOT NULL,
+    author VARCHAR(40) NOT NULL,
     category_id INT NOT NULL,
     FOREIGN KEY (category_id) REFERENCES category (idcategory),
     price DECIMAL(10, 2) NOT NULL,
