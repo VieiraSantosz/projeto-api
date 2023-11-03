@@ -4,7 +4,7 @@ import bcrypt
 
 
 app = Flask(__name__)
-app.secret_key = 'chave_secreta'
+
 
 conexao = mysql.connector.connect(
     host='localhost',

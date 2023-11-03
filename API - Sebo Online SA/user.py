@@ -19,6 +19,7 @@ if conexao.is_connected():
 ### METÓDO POST PARA CRIAR / REGISTRAR USUÁRIOS ###
     @app.route('/users/signup', methods=['POST'])
     def criar_usuario():
+        
         novo_user = request.get_json()
 
         if 'name' in novo_user and 'email' in novo_user and 'password' in novo_user and 'status' in novo_user and 'type' in novo_user:

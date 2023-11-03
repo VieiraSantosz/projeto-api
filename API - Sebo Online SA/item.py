@@ -45,7 +45,6 @@ if conexao.is_connected():
                 response = {
                     'id': resultado[0],
                     'name': resultado[1],
-                    'type': resultado[2],
                     'message': 'Login Feito com Sucesso!'
                 }
                 return jsonify(response)
@@ -103,6 +102,7 @@ if conexao.is_connected():
                 cursor.close()
 
                 response = {
+                    'message': 'Item criado com sucesso!',
                     'title': titulo,
                     'author': autor,
                     'category_id': categoria_id,
@@ -110,8 +110,7 @@ if conexao.is_connected():
                     'description': descricao,
                     'status': status,
                     'date': data,
-                    'saller_id': vendedor_id,
-                    'message': 'Item criado com sucesso!'
+                    'saller_id': vendedor_id
                 }
 
                 return jsonify(response)
