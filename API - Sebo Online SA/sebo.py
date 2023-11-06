@@ -715,6 +715,9 @@ if conexao.is_connected():
             return jsonify(transacao_json)
 ######################################################
 
+########## FIM PÁGINA TRANSACTIONS ##########
+
+
 else:
     print("Não foi possível conectar com o MySql!!")
 
