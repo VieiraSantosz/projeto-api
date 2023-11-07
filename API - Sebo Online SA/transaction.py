@@ -16,49 +16,47 @@ if conexao.is_connected():
     print("\nConexão ao MySQL bem-sucedida!\n")
 
 
-### METÓDO POST PARA REGISTRAR TRANSAÇÕES ###
+##### METÓDO POST PARA REGISTRAR TRANSAÇÕES #####
     @app.route('/transactions', methods=['POST'])
     def criar_transacao():
         
-            transacao = request.get_json()
+        transacao = request.get_json()
+        
+        if 'buyer_id' in transacao and 'saller_id' in transacao and 'item_id' in transacao and 'date' in transacao and 'price' in transacao:
+        
+            comprador_id    = transacao.get('buyer_id')
+            vendedor_id     = transacao.get('saller_id')
+            item_id         = transacao.get('item_id')
+            data            = transacao.get('date')
+            preco           = transacao.get('price')
             
-            if 'buyer_id' in transacao and 'saller_id' in transacao and 'item_id' in transacao and 'date' in transacao and 'price' in transacao:
-            
-                comprador_id    = transacao.get('buyer_id')
-                vendedor_id     = transacao.get('saller_id')
-                item_id         = transacao.get('item_id')
-                data            = transacao.get('date')
-                preco           = transacao.get('price')
-                
-                cursor = conexao.cursor()
+            cursor = conexao.cursor()
 
-                criar_transacao = f'INSERT INTO transaction (buyer_id, saller_id, item_id, date, price) VALUES ("{comprador_id}", "{vendedor_id}", "{item_id}", "{data}", "{preco}")' 
-                cursor.execute(criar_transacao)
+            criar_transacao = f'INSERT INTO transaction (buyer_id, saller_id, item_id, date, price) VALUES ("{comprador_id}", "{vendedor_id}", "{item_id}", "{data}", "{preco}")' 
+            cursor.execute(criar_transacao)
 
-                conexao.commit()
-                cursor.close()
+            conexao.commit()
+            cursor.close()
 
-                response = {
-                    'message'   : 'Transção criado com sucesso!',
-                    'buyer_id'  : comprador_id,
-                    'saller_id' : vendedor_id,
-                    'item_id'   : item_id,
-                    'date'      : data,
-                    'price'     : preco
-                }
-
-                return jsonify(response)
-            
-            else:
-                response = {
-                    'error': 'Verifique se os campos estão sendo inseridos corretamente!'
-                }
-
-                return jsonify(response)
-########################################  
+            response = {
+                'message'   : 'Transação criado com sucesso!',
+                'buyer_id'  : comprador_id,
+                'saller_id' : vendedor_id,
+                'item_id'   : item_id,
+                'date'      : data,
+                'price'     : preco
+            }
+            return jsonify(response)
+        
+        else:
+            response = {
+                'error': 'Verifique se os campos estão sendo inseridos corretamente!'
+            }
+            return jsonify(response)
+########################################
 
 
-### METÓDO GET PARA LISTAR UMA TRANSAÇÃO ESPECÍFICA ###
+##### METÓDO GET PARA LISTAR UMA TRANSAÇÃO ESPECÍFICA #####
     @app.route('/transactions/<int:id>', methods=['GET'])
     def mostrar_transacao_especifico(id):
             
@@ -81,9 +79,9 @@ if conexao.is_connected():
                 } 
                 for u in transacao
             ]
-            
             return jsonify(transacao_json)
 ######################################################
+
 
 else:
     print("Não foi possível conectar com o MySql!!")

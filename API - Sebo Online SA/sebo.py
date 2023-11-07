@@ -29,9 +29,9 @@ if conexao.is_connected():
         
         cursor = conexao.cursor()
 
-        verificar_credenciais_sql = "SELECT iduser, name, password FROM user WHERE name = %s"
+        verificar_credenciais_sql = f'SELECT iduser, name, password FROM user WHERE name = "{usuario}"'
         
-        cursor.execute(verificar_credenciais_sql, (usuario,))
+        cursor.execute(verificar_credenciais_sql)
         
         resultado = cursor.fetchone()
         cursor.close()
@@ -39,9 +39,10 @@ if conexao.is_connected():
         if resultado:
             
             # Verifique a senha criptografada usando bcrypt
-            stored_password = resultado[2].encode('utf-8')
+            senha_criptografa = resultado[2].encode('utf-8')
             
-            if bcrypt.checkpw(senha.encode('utf-8'), stored_password):
+            if bcrypt.checkpw(senha.encode('utf-8'), senha_criptografa):
+                
                 session['name'] = usuario
 
                 response = {
@@ -84,31 +85,35 @@ if conexao.is_connected():
     @app.route('/users/signup', methods=['POST'])
     def criar_usuario():
         
-        novo_user = request.get_json()
+        criar_user = request.get_json()
 
-        if 'name' in novo_user and 'email' in novo_user and 'password' in novo_user and 'status' in novo_user and 'type' in novo_user:
+        if 'name' in criar_user and 'email' in criar_user and 'password' in criar_user and 'status' in criar_user and 'type' in criar_user:
+            
+            nome    = criar_user.get('name')
+            senha   = criar_user.get('password')
+            email   = criar_user.get('email')
+            status  = criar_user.get('status')
+            tipo    = criar_user.get('type')
             
             cursor = conexao.cursor()
 
             # Gere um hash da senha usando bcrypt
-            senha_criptografa = bcrypt.hashpw(novo_user['password'].encode('utf-8'), bcrypt.gensalt())
+            senha_criptografa = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
 
-            criar_usuario_sql = "INSERT INTO user (name, email, password, status, type) VALUES (%s, %s, %s, %s, %s)"
-
-            cursor.execute(criar_usuario_sql, (
-                novo_user['name'],
-                novo_user['email'],
-                senha_criptografa,  # Armazenar o hash da senha no banco de dados
-                novo_user['status'],
-                novo_user['type']
-            ))
+            criar_usuario_sql = f'INSERT INTO user (name, email, password, status, type) VALUES ("{nome}", "{email}", "{senha_criptografa}", "{status}", "{tipo}")'
+            
+            cursor.execute(criar_usuario_sql)
 
             conexao.commit()
             cursor.close()
 
             response = {
                 'message'   : 'Usuário criado com sucesso!',
-                'dados_user': novo_user
+                'user'      : nome,
+                'email'     : email,
+                'senha'     : senha_criptografa,
+                'status'    : status,
+                'type'      : tipo 
             }
             return jsonify(response)
         
@@ -132,29 +137,32 @@ if conexao.is_connected():
         
         editar_user = request.get_json()
         
+        nome    = criar_user.get('name')
+        senha   = criar_user.get('password')
+        email   = criar_user.get('email')
+        status  = criar_user.get('status')
+        tipo    = criar_user.get('type')
+        
         cursor = conexao.cursor()
-
-        editar_usuario_sql = "UPDATE user SET name = %s, email = %s, password = %s, status = %s, type = %s WHERE iduser = %s"
         
         # Hash da senha com bcrypt
-        senha_criptografa = bcrypt.hashpw(editar_user['password'].encode('utf-8'), bcrypt.gensalt())
+        senha_criptografa = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
         
-        cursor.execute(editar_usuario_sql, (
-            editar_user['name'], 
-            editar_user['email'], 
-            senha_criptografa,  # Armazene a senha criptografada no banco de dados
-            editar_user['status'], 
-            editar_user['type'], 
-            id
-        ))
+        editar_usuario_sql = f'UPDATE user SET name = "{nome}", email = "{email}", password = "{senha_criptografa}", status = "{status}", type = "{tipo}" WHERE iduser = "{id}"'
+        
+        cursor.execute(editar_usuario_sql)
 
         conexao.commit()
         cursor.close()
 
         response = {
-            'message'       : 'Usuário editado com sucesso!',
-            'update_user'   : editar_user
-        }
+            'message'   : 'Usuário editado com sucesso!',
+            'user'      : nome,
+            'email'     : email,
+            'senha'     : senha_criptografa,
+            'status'    : status,
+            'type'      : tipo 
+            }
         return jsonify(response)
 ########################################
 
@@ -171,9 +179,9 @@ if conexao.is_connected():
     
         cursor = conexao.cursor()
 
-        excluir_usuario_sql = "DELETE FROM user WHERE iduser = %s"  
+        excluir_usuario_sql = f'DELETE FROM user WHERE iduser = "{id}"'  
         
-        cursor.execute(excluir_usuario_sql, (id,))  
+        cursor.execute(excluir_usuario_sql)  
 
         conexao.commit()
         cursor.close()
@@ -189,7 +197,7 @@ if conexao.is_connected():
 
 ########## PÁGINA ADMINS ##########
 
-### METÓDO POST PARA LOGIN DE ADMINISTRADOR ###
+##### METÓDO POST PARA LOGIN DE ADMINISTRADOR #####
     @app.route('/admin/login', methods=['POST'])
     def login_admin():
         
@@ -200,9 +208,9 @@ if conexao.is_connected():
         
         cursor = conexao.cursor()
 
-        verificar_credenciais_sql = "SELECT idadmin, name FROM admin WHERE name = %s AND password = %s"
+        verificar_credenciais_sql = f'SELECT idadmin, name FROM admin WHERE name = "{administrador}" AND password = "{senha}"'
         
-        cursor.execute(verificar_credenciais_sql, (administrador, senha))
+        cursor.execute(verificar_credenciais_sql)
         
         resultado = cursor.fetchone()
         cursor.close()
@@ -214,7 +222,7 @@ if conexao.is_connected():
             response = {
                 'id'        : resultado[0],
                 'admin'     : resultado[1],
-                'message'   : 'Login Feito com Sucesso!'
+                'message'   : 'Login feito com sucesso!'
             }
             return jsonify(response)
         
@@ -226,7 +234,7 @@ if conexao.is_connected():
 ########################################  
 
 
-### METÓDO POST PARA LOGOUT DO ADMNISTRADOR ###
+##### METÓDO POST PARA LOGOUT DO ADMNISTRADOR #####
     @app.route('/admin/logout', methods=['POST'])
     def logout_admin():
         
@@ -247,7 +255,7 @@ if conexao.is_connected():
 ######################################## 
 
 
-### METÓDO GET PARA LISTAR USUÁRIOS ###
+##### METÓDO GET PARA LISTAR USUÁRIOS #####
     @app.route('/admin/users', methods=['GET'])
     def mostrar_usuario():
         
@@ -259,8 +267,9 @@ if conexao.is_connected():
         
         cursor = conexao.cursor()
         
-        recuperar_usuarios_sql = "SELECT * FROM user"       
-        cursor.execute(recuperar_usuarios_sql)
+        listar_usuarios_sql = "SELECT * FROM user"    
+           
+        cursor.execute(listar_usuarios_sql)
         
         usuarios = cursor.fetchall()
         cursor.close()
@@ -297,8 +306,8 @@ if conexao.is_connected():
             
             cursor = conexao.cursor()
 
-            criar_categoria = f'INSERT INTO category (name, description) VALUES ("{nome}", "{descricao}")' 
-            cursor.execute(criar_categoria)
+            criar_categoria_sql = f'INSERT INTO category (name, description) VALUES ("{nome}", "{descricao}")' 
+            cursor.execute(criar_categoria_sql)
 
             conexao.commit()
             cursor.close()
@@ -331,8 +340,8 @@ if conexao.is_connected():
         
             cursor = conexao.cursor()
 
-            editar_categoria = f'UPDATE category SET name = "{nome}", description = "{descricao}" WHERE idcategory = "{id}"' 
-            cursor.execute(editar_categoria)
+            editar_categoria_sql = f'UPDATE category SET name = "{nome}", description = "{descricao}" WHERE idcategory = "{id}"' 
+            cursor.execute(editar_categoria_sql)
 
             conexao.commit()
             cursor.close()
@@ -357,8 +366,8 @@ if conexao.is_connected():
         
         cursor = conexao.cursor()
         
-        listar_categoria = "SELECT * FROM category"       
-        cursor.execute(listar_categoria)
+        listar_categoria_sql = "SELECT * FROM category"       
+        cursor.execute(listar_categoria_sql)
         
         categorias = cursor.fetchall()
         cursor.close()
@@ -411,18 +420,18 @@ if conexao.is_connected():
         
         cursor = conexao.cursor()
 
-        verificar_credenciais_sql = 'SELECT iduser, name, password FROM user WHERE name = %s and type = "vendedor"'
+        verificar_credenciais_sql = f'SELECT iduser, name, password FROM user WHERE name = "{usuario}" and type = "vendedor"'
         
-        cursor.execute(verificar_credenciais_sql, (usuario,))
+        cursor.execute(verificar_credenciais_sql)
         
         resultado = cursor.fetchone()
         cursor.close()
 
         if resultado:
             # Verifique a senha criptografada usando bcrypt
-            stored_password = resultado[2].encode('utf-8')
+            senha_criptografa = resultado[2].encode('utf-8')
             
-            if bcrypt.checkpw(senha.encode('utf-8'), stored_password):
+            if bcrypt.checkpw(senha.encode('utf-8'), senha_criptografa):
                 session['name'] = usuario
 
                 response = {
@@ -440,7 +449,7 @@ if conexao.is_connected():
 ########################################  
 
 
-### METÓDO POST PARA LOGOUT DO USUÁRIO (VENDEDOR) ###
+##### METÓDO POST PARA LOGOUT DO USUÁRIO (VENDEDOR) #####
     @app.route('/items/logout', methods=['POST'])
     def logout_usuario_vendedor():
         
@@ -481,22 +490,22 @@ if conexao.is_connected():
             
             cursor = conexao.cursor()
 
-            criar_item = f'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id) VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
-            cursor.execute(criar_item)
+            criar_item_sql = f'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id) VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
+            cursor.execute(criar_item_sql)
 
             conexao.commit()
             cursor.close()
 
             response = {
-                'message': 'Item criado com sucesso!',
-                'title': titulo,
-                'author': autor,
-                'category_id': categoria_id,
-                'price': preco,
-                'description': descricao,
-                'status': status,
-                'date': data,
-                'saller_id': vendedor_id
+                'message'       : 'Item criado com sucesso!',
+                'title'         : titulo,
+                'author'        : autor,
+                'category_id'   : categoria_id,
+                'price'         : preco,
+                'description'   : descricao,
+                'status'        : status,
+                'date'          : data,
+                'saller_id'     : vendedor_id
             }
             return jsonify(response)
         
@@ -508,7 +517,7 @@ if conexao.is_connected():
 ########################################
 
 
-### METÓDO GET PARA LISTAR ITENS ###
+##### METÓDO GET PARA LISTAR ITENS #####
     @app.route('/items', methods=['GET'])
     def mostrar_itens():
         
@@ -544,7 +553,7 @@ if conexao.is_connected():
 ######################################################
 
 
-### METÓDO GET PARA LISTAR ITEM ESPECÍFICO ###
+##### METÓDO GET PARA LISTAR ITEM ESPECÍFICO #####
     @app.route('/items/<int:id>', methods=['GET'])
     def mostrar_item_especifico(id):
         
@@ -574,13 +583,12 @@ if conexao.is_connected():
                 'date'          : u[7],
                 'saller_id'     : u[8]
             } 
-            for u in items
         ]
         return jsonify(item_json)
 ######################################################
 
 
-### METÓDO PUT PARA EDITAR ITENS ###
+##### METÓDO PUT PARA EDITAR ITENS #####
     @app.route('/items/<int:id>', methods=['PUT'])
     def editar_item(id):
         
@@ -592,28 +600,35 @@ if conexao.is_connected():
         
         editar_item = request.get_json()
         
+        titulo          = item.get('title')
+        autor           = item.get('author')
+        categoria_id    = item.get('category_id')
+        preco           = item.get('price')
+        descricao       = item.get('description')
+        status          = item.get('status')
+        data            = item.get('date')
+        vendedor_id     = item.get('saller_id')
+        
         cursor = conexao.cursor()
 
-        editar_item_sql = 'UPDATE item SET title = %s, author = %s, category_id = %s, price = %s, description = %s, status = %s, date = %s, saller_id = %s WHERE iditem = %s'
+        editar_item_sql = f'UPDATE item SET title = "{titulo}", author = "{autor}", category_id = "{categoria_id}", price = "{preco}", description = "{descricao}", status = "{status}", date = "{data}", saller_id = "{vendedor_id}" WHERE iditem = "{id}"'
         
-        cursor.execute(editar_item_sql, (
-            editar_item['title'], 
-            editar_item['author'], 
-            editar_item['category_id'], 
-            editar_item['price'],
-            editar_item['description'],
-            editar_item['status'],
-            editar_item['date'],
-            editar_item['saller_id'], 
-            id
-        ))
+        cursor.execute(editar_item_sql)
 
         conexao.commit()
         cursor.close()
 
         response = {
-            'message': 'Item editado com sucesso!',
-            'update_item': editar_item
+            'message'       : 'Item editado com sucesso!',
+            'id'            : u[0], 
+            'title'         : u[1], 
+            'author'        : u[2], 
+            'category_id'   : u[3], 
+            'price'         : u[4], 
+            'description'   : u[5],
+            'status'        : u[6],
+            'date'          : u[7],
+            'saller_id'     : u[8]
         }
         return jsonify(response)
 ########################################
@@ -631,9 +646,9 @@ if conexao.is_connected():
     
         cursor = conexao.cursor()
 
-        excluir_item_sql = "DELETE FROM item WHERE iditem = %s"  
+        excluir_item_sql = f'DELETE FROM item WHERE iditem = "{id}"'  
         
-        cursor.execute(excluir_item_sql, (id,))  
+        cursor.execute(excluir_item_sql)  
 
         conexao.commit()
         cursor.close()

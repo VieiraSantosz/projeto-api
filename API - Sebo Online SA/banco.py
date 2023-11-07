@@ -66,7 +66,18 @@
 );
 
 
-7° Código para testar a conexão com o banco de dados
+7° Criar View para listar nomes do compradores e vendedores
+- CREATE VIEW users_transaction AS
+SELECT transaction.idtransaction, user.name AS buyer_name, transaction.buyer_id, user.name AS saller_name, transaction.saller_id, 
+item.name AS item_name, transaction.item_id, transaction.date, transaction.price 
+FROM transaction
+INNER JOIN item ON item.iditem = transaction.item_id
+INNER JOIN user ON user.iduser = transaction.buyer_id
+INNER JOIN user ON user.iduser = transaction.saller_id;
+
+
+
+8° Código para testar a conexão com o banco de dados
 import mysql.connector
 
 conexao = mysql.connector.connect(

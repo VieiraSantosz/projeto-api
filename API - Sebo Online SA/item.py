@@ -17,35 +17,36 @@ if conexao.is_connected():
     print("\nConexão ao MySQL bem-sucedida!\n")
     
 
-### METÓDO POST PARA LOGIN DO USUÁRIO (VENDEDORES) ###
+##### METÓDO POST PARA LOGIN DO USUÁRIO (VENDEDORES) #####
     @app.route('/items/login', methods=['POST'])
     def login_usuario_vendedor():
         
         login = request.get_json()
         
         usuario = login.get('name')
-        senha = login.get('password')
+        senha   = login.get('password')
         
         cursor = conexao.cursor()
 
-        verificar_credenciais_sql = 'SELECT iduser, name, password FROM user WHERE name = %s and type = "vendedor"'
+        verificar_credenciais_sql = f'SELECT iduser, name, password FROM user WHERE name = "{usuario}" and type = "vendedor"'
         
-        cursor.execute(verificar_credenciais_sql, (usuario,))
+        cursor.execute(verificar_credenciais_sql)
         
         resultado = cursor.fetchone()
         cursor.close()
 
         if resultado:
             # Verifique a senha criptografada usando bcrypt
-            stored_password = resultado[2].encode('utf-8')
+            senha_criptografa = resultado[2].encode('utf-8')
             
-            if bcrypt.checkpw(senha.encode('utf-8'), stored_password):
+            if bcrypt.checkpw(senha.encode('utf-8'), senha_criptografa):
                 session['name'] = usuario
 
                 response = {
-                    'id': resultado[0],
-                    'name': resultado[1],
-                    'message': 'Login Feito com Sucesso!'
+                    'id'        : resultado[0],
+                    'user'      : resultado[1],
+                    'type'      : resultado[5],
+                    'message'   : 'Login feito com sucesso!'
                 }
                 return jsonify(response)
         
@@ -56,15 +57,17 @@ if conexao.is_connected():
 ########################################  
 
 
-### METÓDO POST PARA LOGOUT DO USUÁRIO (VENDEDOR) ###
+##### METÓDO POST PARA LOGOUT DO USUÁRIO (VENDEDOR) #####
     @app.route('/items/logout', methods=['POST'])
     def logout_usuario_vendedor():
+        
         if 'name' in session:
         
             session.pop('name', None)
 
             response = {
-                'message': 'Usuário (Vendedor) acabou de sair da sessão!'
+                'user'      : session['name'],
+                'message'   : 'Usuário (Vendedor) acabou de sair da sessão!'
             }
             return jsonify(response)
         
@@ -73,64 +76,62 @@ if conexao.is_connected():
                 'message': 'Nenhum Usuário (Vendedor) logado!'
             }
             return jsonify(response)
-########################################    
+######################################## 
 
 
-### METÓDO POST PARA CRIAR ITENS ###
+##### METÓDO POST PARA CRIAR ITENS #####
     @app.route('/items', methods=['POST'])
     def criar_itens():
         
-            item = request.get_json()
+        item = request.get_json()
+        
+        if 'title' in item and 'author' in item and 'category_id' in item and 'price' in item and 'description' in item and 'status' in item and 'date' in item and 'saller_id' in item:
+        
+            titulo          = item.get('title')
+            autor           = item.get('author')
+            categoria_id    = item.get('category_id')
+            preco           = item.get('price')
+            descricao       = item.get('description')
+            status          = item.get('status')
+            data            = item.get('date')
+            vendedor_id     = item.get('saller_id')
             
-            if 'title' in item and 'author' in item and 'category_id' in item and 'price' in item and 'description' in item and 'status' in item and 'date' in item and 'saller_id' in item:
-            
-                titulo          = item.get('title')
-                autor           = item.get('author')
-                categoria_id    = item.get('category_id')
-                preco           = item.get('price')
-                descricao       = item.get('description')
-                status          = item.get('status')
-                data            = item.get('date')
-                vendedor_id     = item.get('saller_id')
-                
-                cursor = conexao.cursor()
+            cursor = conexao.cursor()
 
-                criar_item = f'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id) VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
-                cursor.execute(criar_item)
+            criar_item_sql = f'INSERT INTO item (title, author, category_id, price, description, status, date, saller_id) VALUES ("{titulo}", "{autor}", "{categoria_id}", "{preco}", "{descricao}", "{status}", "{data}", "{vendedor_id}")' 
+            cursor.execute(criar_item_sql)
 
-                conexao.commit()
-                cursor.close()
+            conexao.commit()
+            cursor.close()
 
-                response = {
-                    'message': 'Item criado com sucesso!',
-                    'title': titulo,
-                    'author': autor,
-                    'category_id': categoria_id,
-                    'price': preco,
-                    'description': descricao,
-                    'status': status,
-                    'date': data,
-                    'saller_id': vendedor_id
-                }
-
-                return jsonify(response)
-            
-            else:
-                response = {
-                    'error': 'Verifique se os campos estão sendo inseridos corretamente!'
-                }
-
-                return jsonify(response)
+            response = {
+                'message'       : 'Item criado com sucesso!',
+                'title'         : titulo,
+                'author'        : autor,
+                'category_id'   : categoria_id,
+                'price'         : preco,
+                'description'   : descricao,
+                'status'        : status,
+                'date'          : data,
+                'saller_id'     : vendedor_id
+            }
+            return jsonify(response)
+        
+        else:
+            response = {
+                'error': 'Verifique se os campos estão sendo inseridos corretamente!'
+            }
+            return jsonify(response)
 ########################################
 
 
-### METÓDO GET PARA LISTAR ITENS ###
+##### METÓDO GET PARA LISTAR ITENS #####
     @app.route('/items', methods=['GET'])
     def mostrar_itens():
         
         if 'name' not in session:
             response = {
-                'message': 'Realize o Login primeiro!'
+                'message': 'Realize o login primeiro!'
             }
             return jsonify(response)
         
@@ -156,18 +157,17 @@ if conexao.is_connected():
             } 
             for u in items
         ]
-        
         return jsonify(item_json)
 ######################################################
 
 
-### METÓDO GET PARA LISTAR ITEM ESPECÍFICO ###
+##### METÓDO GET PARA LISTAR ITEM ESPECÍFICO #####
     @app.route('/items/<int:id>', methods=['GET'])
     def mostrar_item_especifico(id):
         
         if 'name' not in session:
             response = {
-                'message': 'Realize o Login primeiro!'
+                'message': 'Realize o login primeiro!'
             }
             return jsonify(response)
         
@@ -191,67 +191,72 @@ if conexao.is_connected():
                 'date'          : u[7],
                 'saller_id'     : u[8]
             } 
-            for u in items
         ]
-        
         return jsonify(item_json)
 ######################################################
 
 
-### METÓDO PUT PARA EDITAR ITENS ###
+##### METÓDO PUT PARA EDITAR ITENS #####
     @app.route('/items/<int:id>', methods=['PUT'])
     def editar_item(id):
         
         if 'name' not in session:
             response = {
-                'message': 'Realize o Login primeiro!'
+                'message': 'Realize o login primeiro!'
             }
             return jsonify(response)
         
         editar_item = request.get_json()
         
+        titulo          = item.get('title')
+        autor           = item.get('author')
+        categoria_id    = item.get('category_id')
+        preco           = item.get('price')
+        descricao       = item.get('description')
+        status          = item.get('status')
+        data            = item.get('date')
+        vendedor_id     = item.get('saller_id')
+        
         cursor = conexao.cursor()
 
-        editar_item_sql = 'UPDATE item SET title = %s, author = %s, category_id = %s, price = %s, description = %s, status = %s, date = %s, saller_id = %s WHERE iditem = %s'
+        editar_item_sql = f'UPDATE item SET title = "{titulo}", author = "{autor}", category_id = "{categoria_id}", price = "{preco}", description = "{descricao}", status = "{status}", date = "{data}", saller_id = "{vendedor_id}" WHERE iditem = "{id}"'
         
-        cursor.execute(editar_item_sql, (
-            editar_item['title'], 
-            editar_item['author'], 
-            editar_item['category_id'], 
-            editar_item['price'],
-            editar_item['description'],
-            editar_item['status'],
-            editar_item['date'],
-            editar_item['saller_id'], 
-            id
-        ))
+        cursor.execute(editar_item_sql)
 
         conexao.commit()
         cursor.close()
 
         response = {
-            'message': 'Item editado com sucesso!',
-            'update_item': editar_item
+            'message'       : 'Item editado com sucesso!',
+            'id'            : u[0], 
+            'title'         : u[1], 
+            'author'        : u[2], 
+            'category_id'   : u[3], 
+            'price'         : u[4], 
+            'description'   : u[5],
+            'status'        : u[6],
+            'date'          : u[7],
+            'saller_id'     : u[8]
         }
         return jsonify(response)
 ########################################
 
 
-### METÓDO DEL PARA DELETAR USUÁRIOS ###
+##### METÓDO DEL PARA DELETAR USUÁRIOS #####
     @app.route('/items/<int:id>', methods=['DELETE'])
     def excluir_item(id):
     
         if 'name' not in session:
             response = {
-                'message': 'Realize o Login primeiro!'
+                'message': 'Realize o login primeiro!'
             }
             return jsonify(response)
     
         cursor = conexao.cursor()
 
-        excluir_item_sql = "DELETE FROM item WHERE iditem = %s"  
+        excluir_item_sql = f'DELETE FROM item WHERE iditem = "{id}"'  
         
-        cursor.execute(excluir_item_sql, (id,))  
+        cursor.execute(excluir_item_sql)  
 
         conexao.commit()
         cursor.close()
@@ -260,7 +265,7 @@ if conexao.is_connected():
             'message': 'Item excluído com sucesso!'
         }
         return jsonify(response)
-########################################    
+######################################## 
 
 
 else:
