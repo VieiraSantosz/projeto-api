@@ -136,11 +136,11 @@ if conexao.is_connected():
         
         editar_user = request.get_json()
         
-        nome    = criar_user.get('name')
-        senha   = criar_user.get('password')
-        email   = criar_user.get('email')
-        status  = criar_user.get('status')
-        tipo    = criar_user.get('type')
+        nome    = editar_user.get('name')
+        senha   = editar_user.get('password')
+        email   = editar_user.get('email')
+        status  = editar_user.get('status')
+        tipo    = editar_user.get('type')
         
         cursor = conexao.cursor()
         
