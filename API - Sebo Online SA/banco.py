@@ -68,7 +68,7 @@
 
 7° Criar View para listar nomes do compradores e vendedores
 - CREATE VIEW users_transaction AS
-SELECT transaction.idtransaction, buyer.buyer_id, buyer.name AS buyer_name, saller.saller_id, saller.name AS saller_name, 
+SELECT transaction.idtransaction, transaction.buyer_id, buyer.name AS buyer_name, transaction.saller_id, saller.name AS saller_name, 
 item.item_id, item.name AS item_name, transaction.date, transaction.price 
 FROM transaction
 INNER JOIN item ON item.iditem = transaction.item_id
