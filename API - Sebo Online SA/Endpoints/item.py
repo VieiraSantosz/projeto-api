@@ -206,6 +206,48 @@ if conexao.is_connected():
         return jsonify(item_json)
 ######################################################
 
+    
+##### METÓDO GET PARA LISTAR ITEM COM FILTRO (TITLE) #####
+    @app.route('/items/<string:title>', methods=['GET'])
+    def mostrar_item_title(title):
+        
+        if 'name' not in session:
+            response = {
+                'message': 'Realize o login primeiro!'
+            }
+            return jsonify(response)
+        
+        cursor = conexao.cursor()
+        
+        recuperar_item_sql = 'SELECT * FROM item WHERE title LIKE %s'       
+        cursor.execute(recuperar_item_sql, ('%' + title + '%',))
+        
+        items = cursor.fetchall()
+        cursor.close()
+
+        if not items:
+            response = {
+                'message': 'Nenhum item encontrado com o título fornecido.'
+            }
+            return jsonify(response)
+
+        item_json = [
+            {
+                'id'            : u[0], 
+                'title'         : u[1], 
+                'author'        : u[2], 
+                'category_id'   : u[3], 
+                'price'         : u[4], 
+                'description'   : u[5],
+                'status'        : u[6],
+                'date'          : u[7],
+                'saller_id'     : u[8]
+            } 
+            for u in items
+        ]
+        return jsonify(item_json)
+######################################################
+
 
 ##### METÓDO PUT PARA EDITAR ITENS #####
     @app.route('/items/<int:id>', methods=['PUT'])
