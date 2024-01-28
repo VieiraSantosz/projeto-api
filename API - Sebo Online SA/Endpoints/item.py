@@ -6,11 +6,11 @@ app = Flask(__name__)
 app.secret_key = 'chave_secreta'
 
 
-conexao = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='vieira1234',
-    database='seboonline',
+conexao = mysql.connector.connect (
+    host     = 'host',
+    user     = 'user',
+    password = 'password',
+    database = 'database',
 )
 
 if conexao.is_connected():
