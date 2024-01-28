@@ -78,11 +78,11 @@ INNER JOIN user AS saller ON saller.iduser = transaction.saller_id;
 8° Código para testar a conexão com o banco de dados
 import mysql.connector
 
-conexao = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='vieira1234',
-    database='seboonline',
+conexao = mysql.connector.connect (
+    host     = 'host',
+    user     = 'user',
+    password = 'password',
+    database = 'database',
 )
 
 if conexao.is_connected():
