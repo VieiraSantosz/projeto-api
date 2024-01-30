@@ -1,4 +1,4 @@
-# ProjetoAPI
+# Projeto API - Sebo Online
 
 Projeto de Programação Dinâmica para Web cujo o objetivo é desenvolver uma API robusta e eficiente para o Sebo Contos de Ada, que permita o cadastro de usuários (compradores e vendedores), itens e transações.
 
