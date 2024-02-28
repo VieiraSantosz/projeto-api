@@ -1,8 +1,8 @@
-# Projeto API - Sebo Online
+## Projeto API - Sebo Online
 
 Projeto de Programação Dinâmica para Web cujo o objetivo é desenvolver uma API robusta e eficiente para o Sebo Contos de Ada, que permita o cadastro de usuários (compradores e vendedores), itens e transações.
 
-# Proposta do Trabalho
+## Proposta do Trabalho
 
 **Usuários:** usuários comuns, que podem ser tanto vendedores quanto compradores, além dos funcionários do SEBO e da administração do sistema.
 <br/>
@@ -13,7 +13,7 @@ Projeto de Programação Dinâmica para Web cujo o objetivo é desenvolver uma A
 **Transações:** vendas realizadas entre vendedores e compradores.
 <br/>
 
-# Regras de Negócios
+## Regras de Negócios
 
 1) Permitir o cadastro, edição e remoção de usuários.
 2) Permitir o cadastro, edição e remoção de itens.
